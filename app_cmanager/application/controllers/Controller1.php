@@ -237,6 +237,63 @@ function c_listar_automatizaciones(){
     $this->load->view('pop_crear_usuario');
   }
 
+  function c_pop_cambiar_clave(){ 
+    $this->load->view('pop_cambiar_clave');
+  }
+
+  function c_enviarcambiarclave(){ 
+    $password_ =          $this->input->post('password');
+    $password =           sha1($password_);   
+    $conf_password =      $this->input->post('conf_password');
+    $usuario =            $_SESSION['usuario'];
+
+    $validar_usuario  =  $this->Model_1->m_validar_usuario($usuario,$password);    
+    foreach ($validar_usuario as $key => $value) {
+       $existe = $value->existe;      
+    }
+        
+    if ($existe == 1) {
+
+        $datos_usuario  =  $this->Model_1->m_validardatos_usuario($usuario,$password);
+        foreach ($datos_usuario as $key => $value) {
+            $id_usuario = $value->id_usuario;
+            $id_cliente = $value->id_cliente;
+            $id_rol     = $value->id_rol;
+            $usuario    = $value->usuario;
+            $clave      = $value->clave;
+            $nombres    = $value->nombres;
+            $apellidos  = $value->apellidos;
+            $email      = $value->email;
+            $activo     = $value->activo;
+            $cc         = $value->cc;
+            $fecha_nac  = $value->fecha_nac;
+
+        }
+
+        $data = array(
+            "id_cliente" =>     $id_cliente,
+            "id_rol" =>         $id_rol,
+            "usuario" =>        $usuario, 
+            "clave" =>          sha1($conf_password), 
+            "nombres" =>        $nombres, 
+            "apellidos" =>      $apellidos, 
+            "email" =>          $email, 
+            "activo" =>         $activo, 
+            "cc" =>             $cc, 
+            "fecha_nac" =>      $fecha_nac, 
+        );
+
+        if($this->Model_1->m_update_usser_clave($data,$id_usuario)==true){
+            echo "clave_update";
+          } else{
+            echo "error_update";
+          }
+    }
+    else {
+        echo "noexiste";
+    }
+  }
+
   function c_listar_usuarios(){ 
     $cliente                    = $_SESSION['cliente'];
     $rol                        = $_SESSION['rol']; 

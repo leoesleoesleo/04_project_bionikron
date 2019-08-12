@@ -691,6 +691,36 @@
 
     /*Fin Estaciones*/
 
+    function m_validar_usuario($usuario,$password){
+      $query = "select count(1) existe
+                from conf_usuarios
+                where usuario = '$usuario'
+                and clave = '$password'";        
+      $consulta=$this->db->query($query);    
+      return $consulta->result();
+    }
+
+    function m_validardatos_usuario($usuario,$password){
+      $query = "select *
+                from conf_usuarios
+                where usuario = '$usuario'
+                and clave = '$password'";        
+      $consulta=$this->db->query($query);    
+      return $consulta->result();
+    }
+
+
+    function m_update_usser_clave($data,$id_usuario){
+      $this->db->where('id_usuario', $id_usuario);
+      $this->db->update('conf_usuarios', $data); 
+       if ($this->db->affected_rows() > 0) {
+        return true;
+        } else {
+        return false;
+        }
+    }
+
+
      }
 
 ?>

@@ -1467,6 +1467,65 @@ function eliminar_grupo(id_grupo_,grupo) {
 
 /*Fin Estaciones */
 
+
+  function pop_cambiarclave() {   
+      $.ajax({
+          url: '<?=site_url('controller1/c_pop_cambiar_clave')?>',
+          //data: {'Usuarios':Usuarios},
+          type: "post",
+          beforeSend: show_Loading(),
+          dataType: "html",
+          success: function(data){
+              $('div#cambiarClave').html(data); 
+          hide_Loading();                
+          }
+      });
+  }
+
+
+  function enviarcambiarclave() {  
+    var password =            $('input#password').val();
+    var n_password =          $('input#n_password').val();
+    var conf_password =       $('input#conf_password').val(); 
+    
+    if (n_password == conf_password) {
+      if (password != n_password) {
+
+      $.ajax({
+          url: '<?=site_url('controller1/c_enviarcambiarclave')?>',
+          data: {'conf_password':conf_password,'password':password},
+          type: "post",
+          beforeSend: show_Loading(),
+          dataType: "html",
+          success: function(dato_pop){
+              if (dato_pop=='noexiste'){
+                $.notify("Error! Clave no existe!", "error");
+                hide_Loading();             
+                return;                
+              }
+              if (dato_pop=='error_update'){
+                $.notify("Error al atualizar la Clave!", "error");
+                hide_Loading();             
+                return;               
+              }
+              if (dato_pop=='clave_update'){
+                $.notify("Clave actualizada correctamente!", "success");
+                hide_Loading();             
+                return;               
+              }
+          hide_Loading();  
+          }   
+      });
+      }
+      else {
+        alert("La clave nueva debe ser diferente a la actual !") 
+      }
+    }
+    else {
+      alert("La confirmación de clave debe ser iguales !")
+    }
+  } 
+
 </script>
 
 
@@ -1627,9 +1686,9 @@ function eliminar_grupo(id_grupo_,grupo) {
 								<!--<li>
 									<a role="menuitem" tabindex="-1" href="pages-user-profile.html"><i class="fa fa-user"></i> My Profile</a>
 								</li>-->
-								<!--<li>
-									<a role="menuitem" tabindex="-1" href="#" data-lock-screen="true"><i class="fa fa-lock"></i> Cambiar Clave</a>
-								</li>-->
+								<li>
+									<a role="menuitem" href="#" data-toggle="modal" data-target="#dialog_update" onclick="pop_cambiarclave();"><i class="fa fa-lock"></i> Cambiar Clave</a>
+								</li>
 								<li>
 									<a href="<?=site_url('seguridad/logout')?>" role="menuitem" tabindex="-1" href="pages-signin.html"><i class="fa fa-power-off"></i> Salir</a>
 								</li>
@@ -2018,6 +2077,25 @@ function eliminar_grupo(id_grupo_,grupo) {
 				</div>
 			</aside>
 		-->
+
+     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="dialog_update">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           <div class="modal-header">
+              <h4 class="modal-title">Cambiar Clave</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="container-fluid">
+                <br>
+
+                <div id="cambiarClave"></div>
+
+           </div>
+          </div>
+      </div>
+    </div>
+
 
 		</section>
 
